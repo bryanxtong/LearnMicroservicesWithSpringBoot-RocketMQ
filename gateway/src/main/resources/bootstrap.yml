@@ -1,6 +1,8 @@
 spring:
   cloud:
     nacos:
+      username: nacos
+      password: nacos
       config:
         group: DEFAULT_GROUP
         prefix: application
@@ -8,9 +10,5 @@ spring:
         file-extension: yml
       discovery:
         server-addr: ${SPRING_CLOUD_NACOS_HOST:localhost}:8848
-        username: ${spring.cloud.nacos.username}
-        password: ${spring.cloud.nacos.password}
-      username: nacos
-      password: nacos
 
 
