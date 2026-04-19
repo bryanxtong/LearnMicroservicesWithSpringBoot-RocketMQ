@@ -149,7 +149,7 @@ services:
     env_file:
       - ./env/nacos-standlone-mysql.env
     volumes:
-      - ./standalone-logs/:/home/nacos/logs
+      - ./data/standalone-logs/:/home/nacos/logs
     ports:
       #web console port
       - "8082:8080"
@@ -170,7 +170,7 @@ services:
     env_file:
       - ./env/mysql.env
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
     ports:
       - "3306:3306"
     healthcheck:
@@ -203,7 +203,7 @@ services:
     networks:
       - microservices
   collector:
-    image: otel/opentelemetry-collector-contrib:0.147.0
+    image: otel/opentelemetry-collector-contrib:0.149.0
     volumes:
       - ./collector-config.yaml:/collector-config.yaml
     command: ["--config=/collector-config.yaml"]
@@ -300,6 +300,7 @@ services:
     volumes:
       - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./config/grafana/provisioning/:/etc/grafana/provisioning/
+      - ./data/grafana:/var/lib/grafana
     ports:
       - "3001:3000"
     depends_on:

@@ -5,6 +5,10 @@ receivers:
         endpoint: "0.0.0.0:4318"
       grpc:
         endpoint: "0.0.0.0:4317"
+        
+connectors:
+  spanmetrics: {}
+
 exporters:
   debug:
 
@@ -20,18 +24,18 @@ exporters:
   prometheus:
     endpoint: "0.0.0.0:8889"
     #tls:
-      #insecure: true 
+      #insecure: true
       #ca_file: "/path/to/ca.pem"
       #cert_file: "/path/to/cert.pem"
       #key_file: "/path/to/key.pem"
-    namespace: test-space
+    #namespace: test-space
     #const_labels:
       #label1: value1
       #"another label": spaced value
     send_timestamps: true
     metric_expiration: 180m
     enable_open_metrics: true
-    add_metric_suffixes: false
+    add_metric_suffixes: true
     resource_to_telemetry_conversion:
       enabled: true
 
@@ -59,7 +63,7 @@ exporters:
  
 processors:
   batch:
-  
+
 extensions:
   health_check:
   pprof:
@@ -76,15 +80,23 @@ extensions:
       password: changeme
 service:
   extensions: [pprof, zpages, health_check, basicauth/loki,basicauth]
+  telemetry:
+    metrics:
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: '0.0.0.0'
+                port: 8888
   pipelines:
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, spanmetrics]
       processors: [batch]
       exporters: [debug,prometheus]
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug,zipkin,otlp_grpc,otlp_http/tempo,elasticsearch]
+      exporters: [debug, zipkin, otlp_grpc, otlp_http/tempo, elasticsearch, spanmetrics]
     logs:
       receivers: [otlp]
       exporters: [debug, otlp_http/loki,elasticsearch]
