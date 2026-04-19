@@ -95,6 +95,13 @@ Sentinel Dashboard: http://localhost:8858 (sentinel/sentinel)
 Kibana: http://localhost:5601
 ```
 
+**Important: Nacos Initialization**
+
+After starting Nacos for the first time, you must complete the initialization process:
+1. Access http://localhost:8082/ in your browser
+2. Log in with credentials: `nacos/nacos`
+3. Complete the initialization wizard that appears
+
 See the figure below for a diagram showing the container view.
 
 ![Container View](resources/microservice_patterns-View-Containers.png)
