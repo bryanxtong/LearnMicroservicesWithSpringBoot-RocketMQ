@@ -101,6 +101,7 @@ After starting Nacos for the first time, you must complete the initialization pr
 1. Access http://localhost:8082/ in your browser
 2. Log in with credentials: `nacos/nacos`
 3. Complete the initialization wizard that appears
+4. This step is required to promote the nacos user from regular user to admin (globalAdmin: true)
 
 See the figure below for a diagram showing the container view.
 
