@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 the original author or authors.
+ * Copyright 2013-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.alibaba.cloud.commons.lang.StringUtils;
 import com.alibaba.cloud.sentinel.SentinelConstants;
 import com.alibaba.cloud.sentinel.SentinelProperties;
 import com.alibaba.csp.sentinel.config.SentinelConfig;
+import com.alibaba.csp.sentinel.init.InitExecutor;
 import com.alibaba.csp.sentinel.log.LogBase;
 import com.alibaba.csp.sentinel.transport.config.TransportConfig;
 
@@ -113,10 +114,13 @@ public class SentinelApplicationContextInitializer implements ApplicationContext
             setConfig(BLOCK_PAGE_URL_CONF_KEY, properties.getBlockPage());
         }
 
-/*        // earlier initialize
+        // earlier initialize
+/*
         if (properties.isEager()) {
+
             InitExecutor.doInit();
-        }*/
+        }
+*/
 
     }
 
