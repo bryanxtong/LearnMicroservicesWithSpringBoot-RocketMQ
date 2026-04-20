@@ -184,7 +184,7 @@ services:
     image: bladex/sentinel-dashboard:1.8.9
     container_name: sentinel-dashboard
     ports:
-      - "8858:8080"
+      - "8858:8858"
     restart: always
     networks:
       - microservices
