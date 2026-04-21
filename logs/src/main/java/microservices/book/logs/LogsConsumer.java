@@ -4,6 +4,7 @@ import org.apache.rocketmq.client.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
 import org.apache.rocketmq.client.apis.message.MessageView;
 import org.apache.rocketmq.client.core.RocketMQListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -14,7 +15,8 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@RocketMQMessageListener(consumerGroup = "logs", topic = "logs")
+@ConditionalOnProperty(name = "app.rocketmq.listener.enabled", havingValue = "true", matchIfMissing = true)
+@RocketMQMessageListener(consumerGroup = "logs", topic = "logs", requestTimeout = 15)
 public class LogsConsumer implements RocketMQListener {
     @Override
     public ConsumeResult consume(MessageView messageView) {
@@ -42,4 +44,3 @@ public class LogsConsumer implements RocketMQListener {
         return ConsumeResult.SUCCESS;
     }
 }
-

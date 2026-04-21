@@ -30,7 +30,7 @@ import org.apache.rocketmq.logappender.common.ProducerInstance;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +76,7 @@ public class RocketmqLogbackAppender extends AppenderBase<ILoggingEvent> {
         String logStr = this.layout.doLayout(event);
 
         //customize the code start
-        String keyHash = null;
+        String messageGroup = null;
         try {
             String hostName = "";
             try {
@@ -88,28 +88,27 @@ public class RocketmqLogbackAppender extends AppenderBase<ILoggingEvent> {
             final String applicationId = context.getProperty("applicationId");
 
             if (hostName == null || hostPort == null || applicationId == null) {
-                addError("Hostname/hostport/applicationId could not be found in context.");
+                addError("hostname/hostport/applicationId could not be found in context.");
             } else {
-                String keys = hostName + "-" + hostPort + "-" + applicationId;
-                keyHash = ByteBuffer.allocate(4).putInt(keys.hashCode()).toString();
+                messageGroup = hostName + "-" + hostPort + "-" + applicationId;
             }
 
             ClientServiceProvider provider = ClientServiceProvider.loadService();
             MessageBuilder messageBuilder = provider.newMessageBuilder()
                     .setTopic(topic)
-                    .setBody(logStr.getBytes());
+                    .setBody(logStr.getBytes(StandardCharsets.UTF_8));
             /**
              * Not required fields
              */
-            if (keyHash != null) {
-                messageBuilder.setMessageGroup(keyHash);
+            if (messageGroup != null) {
+                messageBuilder.setMessageGroup(messageGroup);
             }
-            if (keys != null && keys.length != 0) {
-                messageBuilder.setKeys(keys);
+            if (this.keys != null && this.keys.length != 0) {
+                messageBuilder.setKeys(this.keys);
             }
 
-            if (tag != null && tag.length() != 0) {
-                messageBuilder.setTag(tag);
+            if (this.tag != null && this.tag.length() != 0) {
+                messageBuilder.setTag(this.tag);
             }
             //currently there is no easy to add more properties as they return new HashMap<>(properties) in MessageImpl.getProperties()
             messageBuilder.addProperty(ProducerInstance.APPENDER_TYPE, ProducerInstance.LOGBACK_APPENDER);
@@ -126,8 +125,10 @@ public class RocketmqLogbackAppender extends AppenderBase<ILoggingEvent> {
                     .build();
             //customize the code end
 
-            //Send message and do not wait for the ack from the message broker.
-            producer.send(msg);
+            producer.sendAsync(msg).whenComplete((receipt, throwable) -> {
+                if (throwable != null) {
+                }
+            });
         } catch (Exception e) {
             addError("Could not send message in RocketmqLogbackAppender [" + name + "]. Message is : " + logStr, e);
         }
@@ -220,6 +221,14 @@ public class RocketmqLogbackAppender extends AppenderBase<ILoggingEvent> {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public String[] getKeys() {
+        return keys;
+    }
+
+    public void setKeys(String keys) {
+        this.keys = keys == null ? null : keys.split(",");
     }
 
     public void setEndpoint(String endpoint) {

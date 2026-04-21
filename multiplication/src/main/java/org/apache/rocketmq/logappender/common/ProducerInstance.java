@@ -23,11 +23,14 @@ import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.producer.Producer;
 
 import java.io.IOException;
+import java.time.Duration;
 
 /**
  * Common Producer component
  */
 public class ProducerInstance {
+
+    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(15);
 
     public static final String APPENDER_TYPE = "APPENDER_TYPE";
 
@@ -49,7 +52,9 @@ public class ProducerInstance {
 
     public Producer getProducer(String endpoint) throws ClientException {
         ClientServiceProvider provider = ClientServiceProvider.loadService();
-        ClientConfigurationBuilder builder = ClientConfiguration.newBuilder().setEndpoints(endpoint);
+        ClientConfigurationBuilder builder = ClientConfiguration.newBuilder()
+                .setEndpoints(endpoint)
+                .setRequestTimeout(REQUEST_TIMEOUT);
         ClientConfiguration configuration = builder.build();
         producer = provider.newProducerBuilder()
                 .setClientConfiguration(configuration)
