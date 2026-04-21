@@ -27,10 +27,10 @@ datasources:
         datasourceUid: 'webstore-metrics'
         spanStartTimeShift: '1h'
         spanEndTimeShift: '-1h'
-        tags: [{ key: 'service.name', value: 'service' }, { key: 'job' }]
+        tags: [{ key: 'service.name', value: 'service_name' }, { key: 'job' }]
         queries:
           - name: 'Sample query'
-            query: 'sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m]))'
+            query: 'sum(rate(traces_span_metrics_duration_milliseconds_bucket{$$__tags}[5m]))'
       nodeGraph:
         enabled: true
       traceQuery:
