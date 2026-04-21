@@ -192,6 +192,8 @@ services:
   zipkin:
     image: 'openzipkin/zipkin'
     container_name: zipkin
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1024m
     ports:
       - 9411:9411
     healthcheck:
@@ -202,7 +204,7 @@ services:
     networks:
       - microservices
   collector:
-    image: otel/opentelemetry-collector-contrib:0.149.0
+    image: otel/opentelemetry-collector-contrib:0.147.0
     volumes:
       - ./collector-config.yaml:/collector-config.yaml
     command: ["--config=/collector-config.yaml"]
